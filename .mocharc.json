@@ -1,0 +1,9 @@
+{
+    "require": "ts-node/register",
+    "watch-files": [
+        "./src/**/*.ts",
+        "./src/**/*.js",
+        "./src/**/*.json",
+        "./*.env"
+    ]
+}

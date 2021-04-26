@@ -1,0 +1,16 @@
+.github/
+.nyc_output/
+coverage/
+
+src/
+test/
+
+.gitignore
+.npmignore
+.env
+
+tsconfig.json
+
+# Project-level ignored file(s)
+.editorconfig
+.mocharc.json
