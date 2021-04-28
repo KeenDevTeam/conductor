@@ -32,17 +32,11 @@ export default class Conductor {
 
     this.debugger('Creating a new instance of Conductor...');
 
-    // create a new instance of the conductor
-    const conductor = Conductor.create();
-
     // children added directly
     if (Array.isArray(children)) {
       this.debugger(`Adding total number of ${children.length} handlers to the newly created conductor...`);
-      conductor.children.push(...children);
+      this.children.push(...children);
     }
-
-    // conductor is ready
-    return conductor;
   }
 
   /**************************/
