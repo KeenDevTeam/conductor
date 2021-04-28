@@ -2,13 +2,14 @@
  * Library entrypoint
  */
 
+import Async from 'async';
 import debug from 'debug';
 
 /**
  * Data Types
  */
-export type SyncFunction = <U>(...args: Array<any>) => U;
-export type AsyncFunction = <U>(...args: Array<any>) => Promise<U>;
+export type SyncFunction = (...args: Array<any>) => any;
+export type AsyncFunction = (...args: Array<any>) => Promise<any>;
 export type Handler = SyncFunction | AsyncFunction | Conductor;
 /**************************/
 
@@ -75,53 +76,56 @@ export default class Conductor {
    * @param args List of argument to be passed
    * @returns Promise of the U
    */
-  protected async runHandler<U>(target: Handler, ...args: any): Promise<U> {
+  protected runHandler<U>(target: Handler, ...args: Array<any>): Promise<U | undefined> {
 
-    this.debugger('Running handler...');
+    return new Promise<U | undefined>((resolve, reject) => {
 
-    // placeholder for the handler
-    let fn: Handler | undefined = undefined;
+      this.debugger('Running handler...');
 
-    // either sync or async function
-    if (typeof target === 'function') {
-      this.debugger('Handler is a sync function.');
-      fn = target;
-    }
+      // placeholder for the handler
+      let fn: Handler | undefined = undefined;
 
-    // conductor.run method
-    if (target instanceof Conductor) {
-      this.debugger('Handler is an instance of conductor.');
-      fn = (target as Conductor).run;
-    }
+      // either sync or async function
+      if (typeof target === 'function') {
+        this.debugger('Handler is a function.');
+        fn = target;
+      }
 
-    // make sure that the handler was found
-    this.ensureHandlerIsValid(fn);
-    this.debugger('Handler is valid.');
+      // conductor.run method
+      if (target instanceof Conductor) {
+        this.debugger('Handler is an instance of conductor.');
+        fn = (target as Conductor).run;
+      }
 
-    // try calling the handler
-    let result: U | Promise<U> | undefined = undefined;
+      // make sure that the handler was found
+      this.ensureHandlerIsValid(fn);
+      this.debugger('Handler is valid.');
 
-    this.debugger('Executing target function...');
-    // call handler(p1,p2,p3,...)
-    if (Array.isArray(args) === true) {
-      this.debugger(`Total number of ${args.length} are gonna passed to the function...`);
-      result = fn!(...args) as any;
-    }
-    else {
-      // call handler()
-      this.debugger('Passing no argument to the function...');
-      result = fn!() as any;
-    }
+      // try calling the handler
+      let result: U | Promise<U> | undefined = undefined;
 
-    // sync function was called?
-    if (result instanceof Promise === false) {
-      this.debugger('Converting sync result to promise...');
-      result = Promise.resolve(result) as Promise<U>;
-    }
+      this.debugger('Executing target function...');
+      // call handler(p1,p2,p3,...)
+      if (args.length > 0) {
+        this.debugger(`Total number of ${args.length} are gonna passed to the function...`);
+        result = fn!(...args) as any;
+      }
+      else {
+        // call handler()
+        this.debugger('Passing no argument to the function...');
+        result = fn!() as any;
+      }
 
-    // wait for the result
-    this.debugger('Resolving async function...');
-    return (await result)!;
+      // sync function was called?
+      if (result instanceof Promise === false) {
+        this.debugger('Converting sync result to promise...');
+        return resolve(result);
+      }
+
+      // wait for the result
+      this.debugger('Resolving the promise...');
+      (result as Promise<U>).then(resolve).catch(reject);
+    });
   }
 
   /**
@@ -234,12 +238,36 @@ export default class Conductor {
    * Run the current flow and return the result
    * @param args List of the arguments to be passed to the first node in the chain
    */
-  async run<U>(...args: Array<any>): Promise<U> {
+  async run<U>(...args: Array<any>): Promise<U | undefined> {
     this.debugger('Running conductor...');
-    return await (this.children as Array<any>).reduce(
-      // iterate over the handlers in the children list
-      async (memo: Array<any> | any, handler: Handler) => await this.runHandler(handler, ...memo),
-      args
+
+    // result placeholder
+    let result: any = undefined;
+
+    await Async.forEachSeries(
+      // add index to the items
+      this.children.map((handler, index) => ({ index, handler })),
+      // iterate over handlers
+      async ({ handler, index }) => {
+
+        // first node in the list
+        if (index === 0) {
+          result = await this.runHandler(
+            handler,
+            ...args
+          );
+        }
+        else {
+          // other nodes
+          result = await this.runHandler(
+            handler,
+            result
+          );
+        }
+      }
     );
+
+    // return the result
+    return result;
   }
 }
