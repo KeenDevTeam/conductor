@@ -29,7 +29,7 @@ const isHandlerIsFunction: HandlerValidator = (handler?: Handler) => typeof hand
 /**
  * List of invalid handler detector functions
  */
-export const invalidHandlerDetectors: ReadonlyArray<HandlerValidator> = [
+export const defaultInvalidHandlerDetectors: ReadonlyArray<HandlerValidator> = [
   (handler?: any) => typeof handler === 'undefined',
   (handler?: any) => handler === null,
   (handler?: any) =>
@@ -67,56 +67,47 @@ export const runFactory = (
     ifHandlerIsFunction: typeof isHandlerIsFunction,
     ifHandlerIsRunnable: typeof isInstanceOfRunnable,
   ) => (
-    handlerValidator: (handler?: any) => void,
-    ) => async <U>(handler: Handler, ...args: Array<any>): Promise<U | undefined> => {
-      debug('Running handler...');
+    handlerValidator: (handler?: Handler) => void
+  ) => async <U>(handler: Handler, ...args: Array<any>): Promise<U | undefined> => {
+    debug('Running handler...');
 
-      // make sure that the handler was found
-      handlerValidator(handler);
-      debug('Handler is valid.');
+    // make sure that the handler was found
+    handlerValidator(handler);
+    debug('Handler is valid.');
 
-      // placeholder for the handler
-      let fn: Handler | undefined = undefined;
+    // placeholder for the handler
+    let fn: Handler | undefined = undefined;
 
-      // either sync or async function
-      if (ifHandlerIsFunction(handler) === true) {
-        debug('Handler is a function.');
-        fn = handler;
-      }
+    // either sync or async function
+    if (ifHandlerIsFunction(handler) === true) {
+      debug('Handler is a function.');
+      fn = handler;
+    }
 
-      // Runnable.run method
-      if (ifHandlerIsRunnable(fn) === true) {
-        debug('Handler is an instance of conductor.');
-        fn = (handler as Runnable).run;
-      }
+    // Runnable.run method
+    if (ifHandlerIsRunnable(handler) === true) {
+      debug('Handler is an instance of conductor.');
+      fn = (handler as Runnable).run;
+    }
 
-      // try calling the handler
-      let result: U | Promise<U> | undefined = undefined;
+    // try calling the handler
+    let result: U | Promise<U> | undefined = undefined;
 
-      debug('Executing target function...');
-      debug(`Total number of ${args.length} is/are going to be passed the function...`);
-      result = (fn as any)(...args) as any;
-      // // call handler(p1,p2,p3,...)
-      // if (args.length > 0) {
+    debug('Executing target function...');
+    debug(`Total number of ${args.length} is/are going to be passed the function...`);
+    result = (fn as any)(...args) as any;
 
-      // }
-      // else {
-      //   // call handler()
-      //   debug('Passing no argument to the function...');
-      //   result = fn!() as any;
-      // }
+    // sync function was called?
+    if (result instanceof Promise === false) {
+      debug('Converting sync result to promise...');
+      return Promise.resolve(result);
+    }
 
-      // sync function was called?
-      if (result instanceof Promise === false) {
-        debug('Converting sync result to promise...');
-        return Promise.resolve(result);
-      }
-
-      // wait for the result
-      debug('Resolving the promise...');
-      return await (result as Promise<U>);
-    })(
-      Debug('PuzzleIO:Conductor:ExecutionEngine.run'),
-      isHandlerIsFunction,
-      isInstanceOfRunnable
-    );
+    // wait for the result
+    debug('Resolving the promise...');
+    return await (result as Promise<U>);
+  })(
+    Debug('PuzzleIO:Conductor:ExecutionEngine.run'),
+    isHandlerIsFunction,
+    isInstanceOfRunnable
+  );
