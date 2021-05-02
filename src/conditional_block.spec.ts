@@ -5,7 +5,6 @@
 import { expect } from 'chai';
 import ConditionalBlock from './conditional_block';
 import { runFactory, defaultInvalidHandlerDetectors, ensureHandlerIsValidFactory } from './execution_engine';
-import { ConditionalHandler, DefaultConditionalHandler } from './type';
 
 describe('PuzzleIO:Conductor:ConditionalBlock', () => {
 
