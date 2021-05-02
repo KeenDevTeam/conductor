@@ -6,7 +6,7 @@ import Debug, { Debugger } from 'debug';
 
 import { Handler, ConditionalHandler, DefaultConditionalHandler } from './type';
 
-const ConditionalFactory = (
+const ConditionalBlockFactory = (
   (debug: Debugger) =>
     (runner: (handler: Handler, ...args: Array<any>) => any) =>
       (
@@ -56,4 +56,4 @@ const ConditionalFactory = (
       }
 )(Debug('PuzzleIO:Conductor:ConditionalHandler'))
 
-export default ConditionalFactory;
+export default ConditionalBlockFactory;
