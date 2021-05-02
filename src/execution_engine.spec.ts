@@ -84,51 +84,75 @@ describe('PuzzleIO:ExecutionEngine', () => {
       runner = runFactory(ensureHandlerIsValidFactory(...defaultInvalidHandlerDetectors));
     });
 
-    it('should be able to pass no parameter', async () => {
-      const result = await runner!(() => 1);
-      expect(result).to.be.a('number').that.is.eq(1);
-    });
+    describe('failure', () => {
 
-    it('should be able to pass 1 parameter', async () => {
-      const result = await runner!((n) => n + 1, 1);
-      expect(result).to.be.a('number').that.is.eq(2);
-    });
+      it('should throw an error', (done) => {
 
-    it('should be able to pass more than 1 parameters', async () => {
-      const result = await runner!((...n) => n.reduce((acc, n) => acc + n, 0), 1, 2, 3);
-      expect(result).to.be.a('number').that.is.eq(6);
-    });
-
-    it('should run an async function', async () => {
-
-      const result = await runner!(async (n) => n * 2, 1);
-      expect(result).to.be.a('number').that.is.eq(2);
-    });
-
-    it('should run a sync runnable object', async () => {
-
-      const result = await runner!(
-        {
-          run: (...args) => {
-            return args.reduce!((sum, n) => sum + n, 0)
+        runner!(
+          () => {
+            throw new Error('failed!');
           }
-        },
-        2, 3
-      );
-      expect(result).to.be.a('number').that.is.eq(5);
+        ).catch(err => {
+
+          try {
+            expect(err).to.have.property('message').that.is.eq('failed!');
+            return done();
+          }
+          catch (err) {
+            return done(err);
+          }
+        })
+      });
     });
 
-    it('should run an async runnable object', async () => {
+    describe('success', () => {
 
-      const result = await runner!(
-        {
-          run: async (...args) => {
-            return args.reduce!((sum, n) => sum + n, 0)
-          }
-        },
-        3, 4, 5
-      );
-      expect(result).to.be.a('number').that.is.eq(12);
+      it('should be able to pass no parameter', async () => {
+        const result = await runner!(() => 1);
+        expect(result).to.be.a('number').that.is.eq(1);
+      });
+
+      it('should be able to pass 1 parameter', async () => {
+        const result = await runner!((n) => n + 1, 1);
+        expect(result).to.be.a('number').that.is.eq(2);
+      });
+
+      it('should be able to pass more than 1 parameters', async () => {
+        const result = await runner!((...n) => n.reduce((acc, n) => acc + n, 0), 1, 2, 3);
+        expect(result).to.be.a('number').that.is.eq(6);
+      });
+
+      it('should run an async function', async () => {
+
+        const result = await runner!(async (n) => n * 2, 1);
+        expect(result).to.be.a('number').that.is.eq(2);
+      });
+
+      it('should run a sync runnable object', async () => {
+
+        const result = await runner!(
+          {
+            run: (...args) => {
+              return args.reduce!((sum, n) => sum + n, 0)
+            }
+          },
+          2, 3
+        );
+        expect(result).to.be.a('number').that.is.eq(5);
+      });
+
+      it('should run an async runnable object', async () => {
+
+        const result = await runner!(
+          {
+            run: async (...args) => {
+              return args.reduce!((sum, n) => sum + n, 0)
+            }
+          },
+          3, 4, 5
+        );
+        expect(result).to.be.a('number').that.is.eq(12);
+      });
     });
   });
 });
