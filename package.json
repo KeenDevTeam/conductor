@@ -58,8 +58,6 @@
     "all": true
   },
   "dependencies": {
-    "@types/async": "^3.2.6",
-    "async": "^3.2.0",
     "debug": "^4.3.1"
   }
 }
