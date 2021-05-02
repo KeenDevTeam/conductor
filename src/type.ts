@@ -17,3 +17,13 @@ export interface Runnable {
 export type Handler = SyncFunction | AsyncFunction | Runnable;
 
 export type HandlerValidator = (handler?: Handler) => boolean;
+
+export type ConditionalHandler = {
+  check: Handler;
+  handler: Handler;
+};
+
+export type DefaultConditionalHandler = {
+  check?: Handler;
+  handler: Handler;
+};
