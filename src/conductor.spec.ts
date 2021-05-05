@@ -2,11 +2,24 @@
  * Conductor test
  */
 
-import Conductor from './conductor';
-
 import { expect } from 'chai';
 
+import Conductor from './conductor';
+import ConditionalBlock from './conditional_block';
+import { runFactory, ensureHandlerIsValidFactory, defaultInvalidHandlerDetectors } from './execution_engine';
+
+
 describe('PuzzleIO:Conductor', () => {
+
+  let handlerValidator: any | undefined = undefined;
+  let runner: any | undefined = undefined;
+  let conditionalBlockFactory: any | undefined = undefined;
+
+    beforeEach(() => {
+      handlerValidator = ensureHandlerIsValidFactory(...defaultInvalidHandlerDetectors);
+      runner = runFactory(handlerValidator);
+      conditionalBlockFactory = ConditionalBlock(runner);
+    });
 
   describe('Creation', () => {
 
@@ -19,12 +32,12 @@ describe('PuzzleIO:Conductor', () => {
     });
 
     it('should create a new instance using factory method', () => {
-      const instance = Conductor.create();
+      const instance = Conductor.create({ validateHandler: handlerValidator, conditionalBlockFactory: conditionalBlockFactory, run: runner });
       expect(instance).to.be.instanceOf(Conductor);
     });
 
     it('should create a new instance using constructor', () => {
-      const instance = new Conductor();
+      const instance = new Conductor({ validateHandler: handlerValidator, conditionalBlockFactory: conditionalBlockFactory, run: runner });
       expect(instance).to.be.instanceOf(Conductor);
     });
   });
@@ -34,14 +47,14 @@ describe('PuzzleIO:Conductor', () => {
     let instance: Conductor | undefined = undefined;
 
     beforeEach(() => {
-      instance = Conductor.create();
+      instance = new Conductor({ validateHandler: handlerValidator, conditionalBlockFactory: conditionalBlockFactory, run: runner });
     });
 
     it('should add 1 sync handler of the conductor', async () => {
 
       instance!.add(n => n * 2);
 
-      expect(instance as any).to.have.property('children').that.is.an('array').has.lengthOf(1);
+      expect(instance as any).to.have.property('handlers').that.is.an('array').has.lengthOf(1);
       const result = await instance!.run<number>(2);
       expect(result).to.be.a('number').that.is.eq(4);
     });
@@ -51,7 +64,7 @@ describe('PuzzleIO:Conductor', () => {
       instance!.add((m, n) => m * n);
       instance!.add(n => n + 1);
 
-      expect(instance as any).to.have.property('children').that.is.an('array').has.lengthOf(2);
+      expect(instance as any).to.have.property('handlers').that.is.an('array').has.lengthOf(2);
       const result = await instance!.run<number>(1, 2);
       expect(result).to.be.a('number').that.is.eq(3);
     });
@@ -62,7 +75,7 @@ describe('PuzzleIO:Conductor', () => {
       instance!.add(([m, n]) => m * n);
       instance!.add(n => n + 1);
 
-      expect(instance as any).to.have.property('children').that.is.an('array').has.lengthOf(3);
+      expect(instance as any).to.have.property('handlers').that.is.an('array').has.lengthOf(3);
       const result = await instance!.run<number>();
       expect(result).to.be.a('number').that.is.eq(3);
     });
@@ -86,7 +99,7 @@ describe('PuzzleIO:Conductor', () => {
         }
       );
 
-      expect(instance as any).to.have.property('children').that.is.an('array').has.lengthOf(1);
+      expect(instance as any).to.have.property('handlers').that.is.an('array').has.lengthOf(1);
 
       const oddResult = await instance!.run<number>(1);
       expect(oddResult).to.be.a('string').that.is.eq('1 is odd');
