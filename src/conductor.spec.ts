@@ -1,8 +1,8 @@
 /**
- * Conductor module test(s)
+ * Conductor test
  */
 
-import Conductor from './index';
+import Conductor from './conductor';
 
 import { expect } from 'chai';
 
@@ -31,7 +31,7 @@ describe('PuzzleIO:Conductor', () => {
 
   describe('Functionality', () => {
 
-    let instance = Conductor.create();
+    let instance: Conductor | undefined = undefined;
 
     beforeEach(() => {
       instance = Conductor.create();
@@ -42,19 +42,57 @@ describe('PuzzleIO:Conductor', () => {
       instance!.add(n => n * 2);
 
       expect(instance as any).to.have.property('children').that.is.an('array').has.lengthOf(1);
-      const result = await instance.run<number>(2);
+      const result = await instance!.run<number>(2);
       expect(result).to.be.a('number').that.is.eq(4);
     });
 
     it('should add 2 sync handlers of the conductor', async () => {
+
+      instance!.add((m, n) => m * n);
+      instance!.add(n => n + 1);
+
+      expect(instance as any).to.have.property('children').that.is.an('array').has.lengthOf(2);
+      const result = await instance!.run<number>(1, 2);
+      expect(result).to.be.a('number').that.is.eq(3);
+    });
+
+    it('should add 3 sync handlers of the conductor', async () => {
 
       instance!.add(() => [1, 2]);
       instance!.add(([m, n]) => m * n);
       instance!.add(n => n + 1);
 
       expect(instance as any).to.have.property('children').that.is.an('array').has.lengthOf(3);
-      const result = await instance.run<number>();
+      const result = await instance!.run<number>();
       expect(result).to.be.a('number').that.is.eq(3);
+    });
+
+    it('should add sync if block', async () => {
+
+      instance!.if(
+        // check whether it's an even number
+        {
+          check: (n) => n % 2 === 0,
+          handler: (n) => `${n} is even`
+        },
+        // otherwise it's an odd number
+        {
+          check: (n) => n % 2 > 0,
+          handler: (n) => `${n} is odd`
+        },
+        // otherwise, invalid number
+        {
+          handler: (n) => `${n} is not a valid number`
+        }
+      );
+
+      expect(instance as any).to.have.property('children').that.is.an('array').has.lengthOf(1);
+
+      const oddResult = await instance!.run<number>(1);
+      expect(oddResult).to.be.a('string').that.is.eq('1 is odd');
+
+      const evenResult = await instance!.run<number>(2);
+      expect(evenResult).to.be.a('string').that.is.eq('2 is even');
     });
   });
 });
