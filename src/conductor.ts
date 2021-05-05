@@ -4,7 +4,7 @@
 
 import Debug from 'debug';
 
-import { Handler, Runnable, HandlerValidator, ConditionalHandler } from './type';
+import { Handler, Runnable, HandlerValidator, ConditionalHandler, DefaultConditionalHandler } from './type';
 
 import { runFactory } from './execution_engine';
 import ConditionalBlockFactory from './conditional_block';
@@ -147,7 +147,7 @@ export default class Conductor implements Runnable {
    */
   public if(
     mainBlock: ConditionalHandler,
-    ...otherBlocks: Array<ConditionalHandler>
+    ...otherBlocks: Array<DefaultConditionalHandler>
   ): Conductor {
 
     this.debug(`Adding if statement with total number of ${otherBlocks.length + 1} blocks(s)...`);
@@ -178,8 +178,8 @@ export default class Conductor implements Runnable {
 
       this.debug(`Running handler #${counter + 1} ...`);
 
-      const handler = this.handlers[counter++];
       const isFirstHandler = counter === 0;
+      const handler = this.handlers[counter++];      
 
       if (isFirstHandler === true) {
         // in the first iteration, all the parameters will be passed
@@ -190,7 +190,6 @@ export default class Conductor implements Runnable {
         );
       }
       else {
-
         // for the rest of the iterations, result of the previous function
         // will be passed as a single item (functions returns 1 sinle item)
         result = await this.options.run!(

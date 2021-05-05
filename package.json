@@ -1,5 +1,5 @@
 {
-  "name": "replace_with_your_module_name_please",
+  "name": "@puzzleio/conductor",
   "version": "1.0.0",
   "private": "true",
   "description": "Replace this description with your own description",
@@ -15,16 +15,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/{your_organization}/{your_package}.git"
+    "url": "git+https://github.com/PuzzleIO/conductor.git"
   },
   "types": "dist/index.d.ts",
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "KeenDev",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/{your_organization}/{your_package}/issues"
+    "url": "https://github.com/PuzzleIO/conductor/issues"
   },
-  "homepage": "https://github.com/{your_organization}/{your_package}#readme",
+  "homepage": "https://github.com/PuzzleIO/conductor#readme",
   "devDependencies": {
     "@types/chai": "^4.2.16",
     "@types/debug": "^4.1.5",

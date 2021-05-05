@@ -1,4 +1,4 @@
-# NodeJS module (TypeScript)
+# PuzzleIO / Conductor
 
 Try to describe your module briefly here. This is the first part that takes the user's attention.
 
@@ -10,10 +10,10 @@ Try to describe your module briefly here. This is the first part that takes the 
 ```sh
 
 # NPM
-npm i your-module-name --save
+npm i @puzzleio/conductor --save
 
 # Yarn
-yarn install your-module-name
+yarn install @puzzleio/conductor
 
 ```
 
@@ -37,7 +37,7 @@ And you're good to go!
 
 MIT
 
-[npm-image]: https://img.shields.io/npm/v/@itemsjs/config.svg?color=orange
-[npm-url]: https://npmjs.org/package/@itemsjs/config
-[downloads-image]: https://img.shields.io/npm/dt/@itemsjs/config.svg
-[downloads-url]: https://npmjs.org/package/@itemsjs/config
+[npm-image]: https://img.shields.io/npm/v/@puzzleio/conductor.svg?color=orange
+[npm-url]: https://npmjs.org/package/@puzzleio/conductor/config
+[downloads-image]: https://img.shields.io/npm/dt/@puzzleio/conductor.svg
+[downloads-url]: https://npmjs.org/package/@puzzleio/conductor
