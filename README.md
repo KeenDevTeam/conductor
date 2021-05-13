@@ -1,6 +1,8 @@
 # PuzzleIO / Conductor
 
-Try to describe your module briefly here. This is the first part that takes the user's attention.
+Handle the most complex sync/async (or combination of both) workflows in a declarative style.
+
+Conductor helps you making your code more human-readable, although it's super-complex.
 
 [![NPM version][npm-image]][npm-url]
 [![NPM downloads][downloads-image]][downloads-url]
@@ -19,16 +21,59 @@ yarn install @puzzleio/conductor
 
 ## Usage
 
+### Simple mode
+
+For most of the cases, simple mode (which uses default settings) works fine, unless you want to have full control over the options (e.g. runner, handler validator, conditional block factory and so on).
+
 ```js
 
-const MyModule = require('your-module-name');
+const { Conductor } = require('@puzzleio/conductor');
 
-const instance = new MyModule({
-    /**
-     * Your configuration
-     */
-});
+const conductor = Conductor.createDefault();
 
+conductor
+  .add((n, m) =>n + m)  // add received numbers together
+  .add(n => n + 1)      // increase it by one
+  .if({
+    check: n => n % 2 === 0, // even number is received
+    handler: n => console.log(`${n} is an even number.`)
+  }, {
+    handler: n => console.log(`if ${n} is not an even number, for sure it's an odd number.`)
+  });
+
+conductor.run(1, 2)
+  .then(() => console.log('Workflow was executed successfully.'))
+  .catch(console.error);
+
+// output will be:
+// 4 is an even number.
+// Workflow was executed successfully.
+
+```
+
+```ts
+
+import { Conductor } from '@puzzleio/conductor';
+
+const conductor = Conductor.createDefault();
+
+conductor
+  .add((n, m) =>n + m)  // add received numbers together
+  .add(n => n + 1)      // increase it by one
+  .if({
+    check: n => n % 2 === 0, // even number is received
+    handler: n => console.log(`${n} is an even number.`)
+  }, {
+    handler: n => console.log(`if ${n} is not an even number, for sure it's an odd number.`)
+  });
+
+conductor.run(1, 2)
+  .then(() => console.log('Workflow was executed successfully.'))
+  .catch(console.error);
+
+// output will be:
+// 4 is an even number.
+// Workflow was executed successfully.
 ```
 
 And you're good to go!
