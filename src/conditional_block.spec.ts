@@ -3,7 +3,7 @@
  */
 
 import { expect } from 'chai';
-import ConditionalBlock from './conditional_block';
+import conditionalBlockFactory from './conditional_block';
 import { runFactory, defaultInvalidHandlerDetectors, ensureHandlerIsValidFactory } from './execution_engine';
 
 describe('PuzzleIO:Conductor:ConditionalBlock', () => {
@@ -12,7 +12,7 @@ describe('PuzzleIO:Conductor:ConditionalBlock', () => {
 
   beforeEach(() => {
 
-    conditionalBlockRunner = ConditionalBlock(
+    conditionalBlockRunner = conditionalBlockFactory(
       runFactory(
         ensureHandlerIsValidFactory(...defaultInvalidHandlerDetectors)
       )
