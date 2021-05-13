@@ -10,11 +10,10 @@ jobs:
   create:
     runs-on: ubuntu-latest
     steps:
-      - name: extract tag name
+      - name: Get tag name
         id: tag
-        uses: actions/github-script@0.2.0
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            return context.payload.ref.replace(/\/refs\/tags\//, '');
-      - run: echo ${{ steps.tag.outputs.result }}
+        uses: dawidd6/action-get-tag@v1
+
+      - name: print tag name
+        run: |
+          echo ${{ steps.tag.outputs.tag }}
