@@ -12,6 +12,7 @@
     "prepublish": "run-s rebuild test coverage",
     "test": "mocha \"src/**/*.spec.ts\" --config .mocharc.json",
     "test:watch": "npm run test -- --watch",
+    "publish": "npm publish --access=public",
     "publish:test": "npm publish --dry-run"
   },
   "repository": {
