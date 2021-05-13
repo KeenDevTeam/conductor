@@ -1,0 +1,20 @@
+
+name: Create release on tag creation
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  create:
+    runs-on: ubuntu-latest
+    steps:
+      - name: extract tag name
+        id: tag
+        uses: actions/github-script@0.2.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            return context.payload.ref.replace(/\/refs\/tags\//, '');
+      - run: echo ${{ steps.tag.outputs.result }}
