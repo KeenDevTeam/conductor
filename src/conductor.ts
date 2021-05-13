@@ -30,18 +30,25 @@ export default class Conductor implements Runnable {
     return new Conductor(options, ...handlers);
   }
 
+  /**
+   * Create a new instance of the conductor with default settings
+   * @param handlers List of handlers to be added to the conductor
+   * @returns New instance of the Conductor class
+   */
   static createDefault(...handlers: Array<Handler>): Conductor {
-
     // create default reuqirements
     const validateHandler = ensureHandlerIsValidFactory(...defaultInvalidHandlerDetectors);
     const run = runFactory(validateHandler);
 
     // create new instance of the Conductor class
-    return new Conductor({
-      validateHandler,
-      run,
-      conditionalBlockFactory: conditionalBlockFactory(run)
-    }, ...handlers);
+    return new Conductor(
+      {
+        validateHandler,
+        run,
+        conditionalBlockFactory: conditionalBlockFactory(run),
+      },
+      ...handlers
+    );
   }
   /**************************/
 
