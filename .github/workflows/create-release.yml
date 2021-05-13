@@ -14,6 +14,8 @@ jobs:
         id: tag
         uses: dawidd6/action-get-tag@v1
 
-      - name: print tag name
-        run: |
-          gh release create ${{ steps.tag.outputs.tag }}
+      - name: Create a release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          automatic_release_tag: "latest"
+          title: "${{ steps.tag.outputs.tag }}"
