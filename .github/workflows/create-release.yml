@@ -16,4 +16,4 @@ jobs:
 
       - name: print tag name
         run: |
-          gh release ${{ steps.tag.outputs.tag }}
+          gh release create ${{ steps.tag.outputs.tag }}
