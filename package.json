@@ -11,14 +11,29 @@
     "coverage": "nyc npm run test",
     "prepublish": "run-s rebuild test coverage",
     "test": "mocha \"src/**/*.spec.ts\" --config .mocharc.json",
-    "test:watch": "npm run test -- --watch"
+    "test:watch": "npm run test -- --watch",
+    "publish:test": "npm publish --dry-run"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/PuzzleIO/conductor.git"
   },
   "types": "dist/index.d.ts",
-  "keywords": [],
+  "keywords": [
+    "keendev",
+    "puzzleio",
+    "puzzle",
+    "conductor",
+    "flow",
+    "workflow",
+    "async",
+    "async-flow",
+    "async-workflow",
+    "compose",
+    "composition",
+    "async-compose",
+    "async-composition"
+  ],
   "author": "KeenDev",
   "license": "MIT",
   "bugs": {

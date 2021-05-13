@@ -14,3 +14,4 @@ tsconfig.json
 # Project-level ignored file(s)
 .editorconfig
 .mocharc.json
+.prettierrc
