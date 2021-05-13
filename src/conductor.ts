@@ -4,15 +4,15 @@
 
 import Debug from 'debug';
 
-import { Handler, Runnable, HandlerValidator, ConditionalHandler, DefaultConditionalHandler } from './type';
+import { Handler, Runnable, EnsureHandlerIsValid, ConditionalHandler, DefaultConditionalHandler } from './type';
 
-import { runFactory } from './execution_engine';
-import ConditionalBlockFactory from './conditional_block';
+import { defaultInvalidHandlerDetectors, ensureHandlerIsValidFactory, runFactory } from './execution_engine';
+import conditionalBlockFactory from './conditional_block';
 
 export type ConductorOptions = {
-  validateHandler?: HandlerValidator;
+  validateHandler?: EnsureHandlerIsValid;
   run?: ReturnType<typeof runFactory>;
-  conditionalBlockFactory?: ReturnType<typeof ConditionalBlockFactory>;
+  conditionalBlockFactory?: ReturnType<typeof conditionalBlockFactory>;
 };
 
 /**
@@ -28,6 +28,20 @@ export default class Conductor implements Runnable {
    */
   static create(options?: ConductorOptions, ...handlers: Array<Handler>): Conductor {
     return new Conductor(options, ...handlers);
+  }
+
+  static createDefault(...handlers: Array<Handler>): Conductor {
+
+    // create default reuqirements
+    const validateHandler = ensureHandlerIsValidFactory(...defaultInvalidHandlerDetectors);
+    const run = runFactory(validateHandler);
+
+    // create new instance of the Conductor class
+    return new Conductor({
+      validateHandler,
+      run,
+      conditionalBlockFactory: conditionalBlockFactory(run)
+    }, ...handlers);
   }
   /**************************/
 
