@@ -1,7 +1,7 @@
 {
   "name": "@puzzleio/conductor",
   "version": "1.0.0",
-  "description": "Replace this description with your own description",
+  "description": "Handle the most complex sync/async (or combination of both) workflows in a declarative style.",
   "main": "dist/index.js",
   "scripts": {
     "clean": "rimraf dist/",
@@ -11,7 +11,6 @@
     "prepublish": "run-s rebuild test coverage",
     "test": "mocha \"src/**/*.spec.ts\" --config .mocharc.json",
     "test:watch": "npm run test -- --watch",
-    "publish": "npm publish --access=public",
     "publish:test": "npm publish --dry-run"
   },
   "repository": {
