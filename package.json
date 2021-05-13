@@ -1,7 +1,6 @@
 {
   "name": "@puzzleio/conductor",
   "version": "1.0.0",
-  "private": "true",
   "description": "Replace this description with your own description",
   "main": "dist/index.js",
   "scripts": {
