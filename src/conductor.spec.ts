@@ -64,6 +64,11 @@ describe('PuzzleIO:Conductor', () => {
         expect(instance).to.be.instanceOf(Conductor);
       });
 
+      it('should create a new instance using default factory', () => {
+        const instance = Conductor.createDefault();
+        expect(instance).to.be.instanceOf(Conductor);
+      });
+
       it('should create a new instance using constructor', () => {
         const instance = new Conductor({
           validateHandler: handlerValidator,
