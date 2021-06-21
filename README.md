@@ -83,6 +83,6 @@ And you're good to go!
 MIT
 
 [npm-image]: https://img.shields.io/npm/v/@puzzleio/conductor.svg?color=orange
-[npm-url]: https://npmjs.org/package/@puzzleio/conductor/config
+[npm-url]: https://npmjs.org/package/@puzzleio/conductor
 [downloads-image]: https://img.shields.io/npm/dt/@puzzleio/conductor.svg
 [downloads-url]: https://npmjs.org/package/@puzzleio/conductor
